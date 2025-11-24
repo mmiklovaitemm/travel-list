@@ -1,70 +1,141 @@
-# Getting Started with Create React App
+# Far Away – Travel Packing List
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A small React app that helps you prepare for a trip by managing a packing list.  
+You can add items, mark them as packed, delete them, clear the list, and sort the items in different ways.
 
-## Available Scripts
+---
 
-In the project directory, you can run:
+## Features
 
-### `npm start`
+- **Add items**
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+  - Choose a quantity (1–20)
+  - Type an item description
+  - Submit the form to add it to the list
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- **Toggle packed status**
 
-### `npm test`
+  - Click on the checkbox to mark an item as packed / unpacked
+  - Packed items are displayed with a line-through style
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- **Delete a single item**
 
-### `npm run build`
+  - Remove any item by clicking the ❌ button
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- **Clear the entire list**
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+  - "Clear list" button removes all items
+  - Shows a `window.confirm` dialog to avoid accidental deletion
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- **Sorting options**
 
-### `npm run eject`
+  - Sort by input order
+  - Sort alphabetically by description
+  - Sort by packed status (unpacked first, then packed)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- **Live stats footer**
+  - Shows how many items are on the list
+  - Shows how many items are already packed
+  - Displays the packing progress in %
+  - Special message when everything is packed 🎉
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+---
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## Technologies Used
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- React
+- JavaScript (ES6+)
+- JSX
+- CSS (custom `index.css` styling)
 
-## Learn More
+---
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Project Structure (main components)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- **`src/index.js`**
 
-### Code Splitting
+  - React entry point
+  - Renders the `<App />` component into the `root` element
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+- **`src/components/App.js`**
 
-### Analyzing the Bundle Size
+  - Main component that holds the state for all items
+  - Functions:
+    - `handleAddItems` – adds a new item to the list
+    - `handleDeleteItem` – removes an item by `id`
+    - `handleToggleItem` – toggles `packed` status
+    - `handleClearList` – clears all items after confirmation
+  - Renders:
+    - `<Logo />`
+    - `<Form />`
+    - `<PackingList />`
+    - `<Stats />`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+- **`src/components/Logo.js`**
 
-### Making a Progressive Web App
+  - Displays the app title "Far Away" with emojis
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+- **`src/components/Form.js`**
 
-### Advanced Configuration
+  - Controlled form component
+  - Local state:
+    - `description` – item text
+    - `quantity` – selected quantity
+  - On submit:
+    - Prevents default form behavior
+    - Validates that description is not empty
+    - Creates a new item object: `{ description, quantity, packed: false, id: Date.now() }`
+    - Passes the new item up via `onAddItems`
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+- **`src/components/PackingList.js`**
 
-### Deployment
+  - Receives the `items` array and handler functions as props
+  - Local state:
+    - `sortBy` – current sort type (`"input"`, `"description"`, `"packed"`)
+  - Creates `sortedItems` based on the selected sort option
+  - Renders:
+    - `<Item />` list
+    - Sorting `<select>` dropdown
+    - "Clear list" button
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+- **`src/components/Item.js`**
 
-### `npm run build` fails to minify
+  - Displays one list item:
+    - Checkbox to toggle `packed`
+    - Quantity + description
+    - Delete button
+  - Calls `onToggleItem` and `onDeleteItem` handlers via props
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- **`src/components/Stats.js`**
+  - Shows summary information at the bottom
+  - If no items:
+    - Shows message: _"Start adding some items to your packing list"_
+  - If there are items:
+    - Calculates:
+      - `numItems` – total count
+      - `numPacked` – packed items
+      - `percentage` – rounded packed percentage
+    - Renders different message when `percentage === 100`
+
+---
+
+## How to Run the Project
+
+1. Make sure **Node.js** and **npm** are installed.
+2. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Start the development server:
+
+```bash
+   npm start
+```
+
+4. Open the app in your browser at:
+
+```bash
+   http://localhost:3000
+```
